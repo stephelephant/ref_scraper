@@ -7,9 +7,8 @@ import numpy as np
 
 def box_score(url):
   # collect HTML data - boxscore URL
-  html = urlopen(url)
-  # geting whole soup and then break into team soups
-  soup = BeautifulSoup(html, features="html.parser")
+  with urlopen(url) as html:
+     soup = BeautifulSoup(html, features="html.parser")
 
   # finding these urls to identify teams playing somewhere on the boxscore page
   teamhref = soup.findAll(href=re.compile('teams/.../...._games.html'), limit=2)
@@ -116,10 +115,8 @@ def box_score(url):
 
   return df
 
-
-
-
 def get_game_links(start_year,end_year):
+  
     
     
     baseurl = r'https://www.basketball-reference.com/leagues/NBA_'
@@ -139,8 +136,9 @@ def get_game_links(start_year,end_year):
     
     for url in schedule_urls:
         try:
-            html = urlopen(url)
-            soup = BeautifulSoup(html, features='html.parser')
+            with urlopen(url) as html:
+              soup = BeautifulSoup(html, features='html.parser')
+
             th = soup.findAll(name='th', attrs={'data-stat':'date_game'}, scope='row')
             games = [str(h)[22:34] for h in th]
             for game in games:
@@ -156,3 +154,47 @@ def get_game_links(start_year,end_year):
     
     
     return box_score_urls
+
+def get_active_players():
+  active_players = []
+  ap_links = []
+
+  for x in "abcdefhijklmnopqrstuvwxyz":
+
+    with urlopen(f'https://www.basketball-reference.com/players/{x}/') as html:
+      soup = BeautifulSoup(html, features="html.parser")
+
+    th = soup.findAll('th', "left", {'data-stat':'player'})
+  
+    players = [th[x].getText() for x in range(0,len(th)) if "strong" in str(th[x])]
+    
+    
+    for p in players:
+      active_players.append(p)
+
+    href_list = [th[x].findAll('a')[0]['href'] for x in range(0,len(th)) if "strong" in str(th[x])]
+
+    for path in href_list:
+       ap_links.append(path)
+
+  player_href = {k:v for (k,v) in zip(active_players,ap_links)}
+
+  return player_href
+    
+
+
+  
+
+  # return active_players
+
+def game_log():
+   
+  with urlopen('https://www.basketball-reference.com/players/c/curryst01.html') as html:
+    soup = BeautifulSoup(html, features="html.parser")
+
+  find = soup.findAll("li", "full hasmore")[0].findAll('a')
+
+  print(len(find))
+  for x in range(0, len(find)):
+     print(find[x])
+  
