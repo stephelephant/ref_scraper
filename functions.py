@@ -188,7 +188,7 @@ def get_active_players():
   # return active_players
 
 
-def game_log():
+def get_game_log_url():
    
   with urlopen('https://www.basketball-reference.com/players/c/curryst01.html') as html:
     soup = BeautifulSoup(html, features="html.parser")
@@ -199,5 +199,38 @@ def game_log():
   length_of_find = len(find)
   url_list = [find[x] for x in range(length_of_find)]
 
+  #find[0]['href'] to get the url
+
   return url_list
+
+def get_game_log():
+   
+  with urlopen('https://www.basketball-reference.com/players/c/curryst01/gamelog/2010') as html:
+    soup = BeautifulSoup(html, features="html.parser")
   
+  # rows of the game
+  table_row = soup.findAll("tr", id = re.compile("pgl_basic.."))
+
+  #tabel data from iterating through rows
+  #first section is getting the column data to initiate the dataframe
+
+  table_data = table_row[0].findAll("td")
+  length = len(table_data)
+  data_stat = [table_data[i]['data-stat'] for i in range(length)]
+  txt = [table_data[i].text for i in range(length)]
+  data_dic = {k:[v] for (k,v) in zip(data_stat, txt)}
+  df = pd.DataFrame(data_dic)
+
+
+  for x in range(1,len(table_row)):
+    table_data = table_row[x].findAll("td")
+    length = len(table_data)
+    data_stat = [table_data[i]['data-stat'] for i in range(length)]
+    txt = [table_data[i].text for i in range(length)]
+    df.loc[len(df.index)] = txt
+
+
+
+  
+                         
+
