@@ -187,14 +187,17 @@ def get_active_players():
 
   # return active_players
 
+
 def game_log():
    
   with urlopen('https://www.basketball-reference.com/players/c/curryst01.html') as html:
     soup = BeautifulSoup(html, features="html.parser")
 
-  find = soup.findAll("li", "full hasmore")[0].findAll('a')
 
-  print(len(find))
-  for x in range(0, len(find)):
-     print(find[x])
+  find = soup.findAll("li", "full hasmore")[0].findAll('a')
+  
+  length_of_find = len(find)
+  url_list = [find[x] for x in range(length_of_find)]
+
+  return url_list
   
