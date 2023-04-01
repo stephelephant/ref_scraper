@@ -200,19 +200,22 @@ def get_active_players():
 
 
 def get_game_log_url():
-   
-  with urlopen('https://www.basketball-reference.com/players/c/curryst01.html') as html:
+  vars = config['GET_GAME_LOG_URL']
+  baseURL = vars['baseURL']
+  extn = 'players/c/curryst01.html'
+  with urlopen(baseURL + extn) as html:
     soup = BeautifulSoup(html, features="html.parser")
 
 
   find = soup.findAll("li", "full hasmore")[0].findAll('a')
   
   length_of_find = len(find)
-  url_list = [find[x] for x in range(length_of_find)]
+  url_list = [find[x]['href'] for x in range(length_of_find)]
+  season = [find[x].text for x in range(length_of_find)]
 
-  #find[0]['href'] to get the url
+  g_URLs = {k:v for (k,v) in zip(season,url_list)}
 
-  return url_list
+  return g_URLs
 
 def get_game_log():
    
