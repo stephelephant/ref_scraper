@@ -3,6 +3,13 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import re
 import numpy as np
+from configparser import ConfigParser
+
+config = ConfigParser()
+try:
+   config.read("settings.ini")
+except Exception as e:
+   print("Could not read settings file: " + str(e))
 
 
 def box_score(url):
@@ -155,13 +162,17 @@ def get_game_links(start_year,end_year):
     
     return box_score_urls
 
+
 def get_active_players():
+  vars = config['GET ACTIVE PLAYERS']
+  baseURL = vars['baseURL']
+  charList = vars['charList']
   active_players = []
   ap_links = []
 
-  for x in "abcdefhijklmnopqrstuvwxyz":
+  for char in charList:
 
-    with urlopen(f'https://www.basketball-reference.com/players/{x}/') as html:
+    with urlopen(f'{baseURL}{char}/') as html:
       soup = BeautifulSoup(html, features="html.parser")
 
     th = soup.findAll('th', "left", {'data-stat':'player'})
