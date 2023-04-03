@@ -1,27 +1,22 @@
-from functions import box_score, get_game_links
+import pandas as pd
+from functions import get_active_players
+from functions import get_game_log_url
+from functions import get_game_log
 
-    
-start = 2021
-end = 2022
-outputpath = r'/home/stvn/Desktop/stats_reference_scrape/nba_box_scores/outputs/'
+activePlayers = get_active_players()
 
-def scrape():
-    
-    box_score_urls = get_game_links(start, end)
-    jj = 1
-    for x in box_score_urls:
-        error_urls = []
-        try:
-            print(f"working on file {jj} out of {len(box_score_urls)}")
-            r = box_score(x)
-            r.to_csv(outputpath + r.name)
-            jj += 1
-        except:
-            print(f'error with {x}')
-            error_urls.append(x)
-            jj += 1
-            continue
-    return error_urls
-    
-if __name__ == "__main__":
-    scrape()
+gls = []
+
+for e in activePlayers.values():
+    gls.append(get_game_log_url(e))
+
+
+print(gls)
+
+
+cald = '/players/c/cabocbr01/gamelog/2015'
+
+from functions import get_game_log
+
+cdf = get_game_log(cald)
+

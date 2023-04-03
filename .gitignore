@@ -5,4 +5,8 @@ __pycache__/
 scratch.py
 scratch-notebook.ipynb
 settings.py
+urls.txt
+models.py
+dbsettings.ini
+
 

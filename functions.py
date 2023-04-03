@@ -199,10 +199,10 @@ def get_active_players():
   # return active_players
 
 
-def get_game_log_url():
+def get_game_log_url(extn_url):
   vars = config['GET_GAME_LOG_URL']
   baseURL = vars['baseURL']
-  extn = 'players/c/curryst01.html'
+  extn = extn_url
   with urlopen(baseURL + extn) as html:
     soup = BeautifulSoup(html, features="html.parser")
 
@@ -211,15 +211,16 @@ def get_game_log_url():
   
   length_of_find = len(find)
   url_list = [find[x]['href'] for x in range(length_of_find)]
-  season = [find[x].text for x in range(length_of_find)]
+  # season = [find[x].text for x in range(length_of_find)]
 
-  g_URLs = {k:v for (k,v) in zip(season,url_list)}
+  # g_URLs = {k:v for (k,v) in zip(season,url_list)}
 
-  return g_URLs
+  return url_list
 
-def get_game_log():
-   
-  with urlopen('https://www.basketball-reference.com/players/c/curryst01/gamelog/2010') as html:
+def get_game_log(extn_url):
+  vars = config['GET_GAME_LOG']
+  baseURL = vars['baseURL']
+  with urlopen(baseURL + extn_url) as html:
     soup = BeautifulSoup(html, features="html.parser")
   
   # rows of the game
@@ -242,6 +243,8 @@ def get_game_log():
     data_stat = [table_data[i]['data-stat'] for i in range(length)]
     txt = [table_data[i].text for i in range(length)]
     df.loc[len(df.index)] = txt
+
+  return df
 
 
 
