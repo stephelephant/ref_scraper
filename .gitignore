@@ -6,7 +6,6 @@ scratch.py
 scratch-notebook.ipynb
 settings.py
 urls.txt
-models.py
-dbsettings.ini
+database/
 
 
