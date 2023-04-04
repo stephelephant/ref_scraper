@@ -6,6 +6,6 @@ scratch.py
 scratch-notebook.ipynb
 settings.py
 urls.txt
-database/
+db/
 
 
