@@ -171,9 +171,11 @@ def get_active_players():
   ap_links = []
 
   for char in charList:
-
-    with urlopen(f'{baseURL}{char}/') as html:
-      soup = BeautifulSoup(html, features="html.parser")
+    try: 
+      with urlopen(f'{baseURL}{char}/') as html:
+        soup = BeautifulSoup(html, features="html.parser")
+    except Exception as e:
+       print("could not connect: " + str(e))
 
     th = soup.findAll('th', "left", {'data-stat':'player'})
   
@@ -188,9 +190,10 @@ def get_active_players():
     for path in href_list:
        ap_links.append(path)
 
-  player_href = {k:v for (k,v) in zip(active_players,ap_links)}
+  # player_href = {k:v for (k,v) in zip(active_players,ap_links)}
 
-  return player_href
+  table = [(name, url) for (name,url) in zip(active_players,ap_links)]
+  return table
     
 
 
