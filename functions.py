@@ -220,7 +220,7 @@ def get_game_log_url(extn_url):
 
   return url_list
 
-def get_game_log(extn_url):
+def get_game_log(extn_url,m=0):
   vars = config['GET_GAME_LOG']
   baseURL = vars['baseURL']
   with urlopen(baseURL + extn_url) as html:
@@ -232,22 +232,38 @@ def get_game_log(extn_url):
   #tabel data from iterating through rows
   #first section is getting the column data to initiate the dataframe
 
-  table_data = table_row[0].findAll("td")
-  length = len(table_data)
-  data_stat = [table_data[i]['data-stat'] for i in range(length)]
-  txt = [table_data[i].text for i in range(length)]
-  data_dic = {k:[v] for (k,v) in zip(data_stat, txt)}
-  df = pd.DataFrame(data_dic)
 
 
-  for x in range(1,len(table_row)):
-    table_data = table_row[x].findAll("td")
-    length = len(table_data)
-    data_stat = [table_data[i]['data-stat'] for i in range(length)]
-    txt = [table_data[i].text for i in range(length)]
-    df.loc[len(df.index)] = txt
+  tuple_list = []
+  for x in range(len(table_row)):
+    if x == 0:
+      table_data = table_row[x].findAll("td")
+      length = len(table_data)
+      data_stat = [table_data[i]['data-stat'] for i in range(length)]
+      txt = [table_data[i].text for i in range(length)]
+      tup = tuple(txt)
+      tuple_list.append(tup)
+      data_dic = {k:[v] for (k,v) in zip(data_stat, txt)}
+      df = pd.DataFrame(data_dic)
+      
+    else:
+      table_data = table_row[x].findAll("td")
+      length = len(table_data)
+      data_stat = [table_data[i]['data-stat'] for i in range(length)]
+      txt = [table_data[i].text for i in range(length)]
+      tup = tuple(txt)
+      tuple_list.append(tup)
+      df.loc[len(df.index)] = txt
 
-  return df
+
+
+  df['ref_path'] = extn_url
+  df['season'] = str(extn_url)[-4:]
+
+  if m == 1:
+     return tuple_list
+  else:
+    return df
 
 
 
